@@ -400,7 +400,7 @@
     <nav class="navbar">
         <div class="navbar-brand">🔍 Data Detective Workspace</div>
         <div class="navbar-stats">
-            <div class="stat-counter">Evidence Clues: <span id="nav-idx-tracker">0</span>/35</div>
+            <div class="stat-counter">Evidence Clues: <span id="nav-idx-tracker">0</span>/32</div>
             <div class="stat-counter">Accuracy Rating: <span id="nav-accuracy">100%</span></div>
         </div>
     </nav>
@@ -485,11 +485,9 @@
                 <div id="clue-security-status" style="color: var(--accent-bright);">🔒 CLUE LOCKED</div>
             </div>
 
-            <div id="case-clue-prompt" class="case-clue-prompt">
-                </div>
+            <div id="case-clue-prompt" class="case-clue-prompt"></div>
 
-            <div id="input-interaction-ground">
-                </div>
+            <div id="input-interaction-ground"></div>
 
             <div id="banner-pass" class="feedback-banner feedback-pass">
                 ✅ Clue Unlocked! Analysis validated. You may now advance your detective logs.
@@ -507,7 +505,7 @@
         <div id="summary-panel" class="workspace-panel hidden">
             <div class="victory-screen">
                 <div class="victory-title">🎉 Case Fully Resolved!</div>
-                <p style="font-size: 1.25rem; margin-bottom: 20px; color: var(--text-muted);">You tracked down all 35 operational anomalies across the statistical systems.</p>
+                <p style="font-size: 1.25rem; margin-bottom: 20px; color: var(--text-muted);">You tracked down all data anomalies across the statistical systems.</p>
                 <div style="margin: 30px 0; font-size: 1.1rem;">
                     Final Diagnostic Accuracy: <strong id="final-accuracy-score" style="color: var(--vibrant-yellow); font-size: 2rem;">100%</strong>
                 </div>
@@ -519,14 +517,14 @@
 
     <script>
         const coreQuestionDataset = [
-            // --- Modality A: Standard Multiple Choice (4 choices) ---
+            // --- Modality A: Standard Multiple Choice ---
             { type: "mc", q: "Find the mean of the data values: [4, 8, 5, 2, 11]", choices: ["5", "6", "7", "30"], a: "6" },
             { type: "mc", q: "What is the median of the following ordered set? [1, 3, 3, 6, 7, 8, 9]", choices: ["3", "6", "7", "5"], a: "6" },
             { type: "mc", q: "Identify the mode for the following list of integers: [14, 15, 16, 14, 17, 14, 19]", choices: ["14", "15", "16", "17"], a: "14" },
-            { type: "mc", q: "If a dataset has an odd number of values sorted from least to greatest, the median is always...", choices: ["The average of all values", "The value that appears most often", "The exact middle value", "The maximum minus the minimum"], a: "The exact middle value" },
+            { type: "mc", q: "If a dataset has an odd number of values sorted from least to greatest, the median is always...", choices: ["The average of all values", "The value that appears most often", "The exact middle value", "The highest value"], a: "The exact middle value" },
             { type: "mc", q: "A set of four cards has a mean of 5. What is the sum of all values on the cards?", choices: ["4", "5", "9", "20"], a: "20" },
 
-            // --- Modality B: True or False Validation Checks ---
+            // --- Modality B: True or False ---
             { type: "tf", q: "True or False: A set of numerical data can have more than one mode value.", choices: ["True", "False"], a: "True" },
             { type: "tf", q: "True or False: To find the median, it does not matter if you sort the numbers or leave them in random order.", choices: ["True", "False"], a: "False" },
             { type: "tf", q: "True or False: The mean is always one of the actual numbers present in the original dataset.", choices: ["True", "False"], a: "False" },
@@ -538,9 +536,8 @@
             { type: "blank", q: "To calculate the ______, you add up all the values and divide by the total count of items.", a: "mean" },
             { type: "blank", q: "The ______ is the value in the middle when data items are arranged in order.", a: "median" },
             { type: "blank", q: "A dataset that has exactly two distinct modes is described as being ______.", a: "bimodal" },
-            { type: "blank", q: "The difference between the maximum and minimum values of a set is called its ______.", a: "range" },
 
-            // --- Modality D: Numerical Values & Calculations Verification ---
+            // --- Modality D: Numerical Values & Calculations ---
             { type: "numeric", q: "Find the mean of the numbers: 10, 15, 20, 25, 30.", a: "20" },
             { type: "numeric", q: "Calculate the median of this even-sized dataset: [2, 4, 6, 12].", a: "5" },
             { type: "numeric", q: "What is the mode of this dataset: [8, 3, 5, 8, 2, 8, 3]?", a: "8" },
@@ -552,11 +549,6 @@
                 { term: "Mean", text: "The mathematical average or statistical balancing point of all data.", id: "target-mean" },
                 { term: "Median", text: "The precise middle item dividing an ordered value string in half.", id: "target-median" },
                 { term: "Mode", text: "The component demonstrating the highest structural frequency count.", id: "target-mode" }
-            ]},
-            { type: "match", q: "Match the following structural terms to their correct analytical descriptions:", pairings: [
-                { term: "Bimodal", text: "A dataset that contains exactly two distinct, tying mode values.", id: "target-bi" },
-                { term: "Outlier", text: "An extreme observation standing far apart from the rest of the group.", id: "target-out" },
-                { term: "Range", text: "The absolute mathematical spread measured from minimum to maximum.", id: "target-range" }
             ]},
             { type: "match", q: "Complete this central tendency definitions matrix:", pairings: [
                 { term: "Mean", text: "Calculated by total sum divided by data count.", id: "target-m1" },
@@ -575,22 +567,18 @@
             ]},
 
             // --- Modality F: Checkbox Grid Lists (Multi-Correct Options) ---
-            { type: "checkbox", q: "Select ALL items that are valid measures of central tendency:", choices: ["Mean", "Median", "Range", "Mode"], a: ["Mean", "Median", "Mode"] },
+            { type: "checkbox", q: "Select ALL items that are valid measures of central tendency:", choices: ["Mean", "Median", "Mode", "Spread"], a: ["Mean", "Median", "Mode"] },
             { type: "checkbox", q: "For the dataset [2, 2, 5, 5, 8, 14], select ALL correct statements:", choices: ["The mode is 2", "The mode is 5", "The set is bimodal", "The mean is 6"], a: ["The mode is 2", "The mode is 5", "The set is bimodal", "The mean is 6"] },
-            { type: "checkbox", q: "Which data sets have a calculated median equal to exactly 10? (Select all that apply)", choices: ["[10, 10, 10]", "[5, 10, 15]", "[8, 9, 11, 12]", "[10, 20]"], a: ["..."] },
-            { type: "checkbox", q: "Identify all datasets that have a mean equal to exactly 4:", choices: ["[4, 4, 4]", "[2, 6]", "[0, 4, 8]", "[1, 3, 5]"], a: ["..."] },
+            { type: "checkbox", q: "Which data sets have a calculated median equal to exactly 10? (Select all that apply)", choices: ["[10, 10, 10]", "[5, 10, 15]", "[8, 9, 11, 12]", "[10, 20]"], a: ["[10, 10, 10]", "[5, 10, 15]", "[8, 9, 11, 12]"] },
+            { type: "checkbox", q: "Identify all datasets that have a mean equal to exactly 4:", choices: ["[4, 4, 4]", "[2, 6]", "[0, 4, 8]", "[1, 3, 5]"], a: ["[4, 4, 4]", "[2, 6]", "[0, 4, 8]"] },
             { type: "checkbox", q: "Select all options that describe a situation with NO mode:", choices: ["Every number occurs once", "Two numbers tie for highest frequency", "All numbers occur exactly twice", "The mean equals the median"], a: ["Every number occurs once", "All numbers occur exactly twice"] },
 
             // --- Modality G: Random Layout Variants ---
             { type: "mc", q: "[VARIANT] A student scores 80, 90, and 100 on three quizzes. What is their mean score?", choices: ["80", "85", "90", "95"], a: "90" },
-            { type: "numeric", q: "[VARIANT] What is the range of this data cluster: [14, 2, 28, 19, 7]?", a: "26" },
             { type: "tf", q: "[VARIANT] True or False: If you add 10 to every value in a dataset, the mean increases by exactly 10.", choices: ["True", "False"], a: "True" },
             { type: "blank", q: "[VARIANT] When finding the median of an even number of data points, calculate the mean of the ______ two numbers.", a: "middle" },
             { type: "checkbox", q: "[VARIANT] Select all datasets that contain the number 5 as their actual calculated mode:", choices: ["[5, 5, 2, 3]", "[5, 6, 7, 5, 6, 5]", "[1, 2, 3, 4, 5]", "[5, 5, 9, 9]"], a: ["[5, 5, 2, 3]", "[5, 6, 7, 5, 6, 5]"] }
         ];
-
-        coreQuestionDataset[27].a = ["[10, 10, 10]", "[5, 10, 15]", "[8, 9, 11, 12]"];
-        coreQuestionDataset[28].a = ["[4, 4, 4]", "[2, 6]", "[0, 4, 8]"];
 
         let activeClueQueue = [];
         let activeClueIdx = 0;
@@ -872,7 +860,7 @@
             uiGame.classList.add('hidden');
             uiSummary.classList.remove('hidden');
             uiProgressBar.style.width = "100%";
-            uiNavIdx.textContent = "35";
+            uiNavIdx.textContent = "32";
             const accuracy = Math.round(((totalAttemptsCount - missedAttemptsCount) / totalAttemptsCount) * 100);
             document.getElementById('final-accuracy-score').textContent = `${accuracy}%`;
         }
